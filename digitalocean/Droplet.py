@@ -605,16 +605,25 @@ class Droplet(BaseAPI):
 
     def get_snapshots(self):
         """
-            This method will return the snapshots/images connected to that
+            This method will return the snapshot images connected to that
             specific droplet.
         """
-        snapshots = list()
-        for id in self.snapshot_ids:
-            snapshot = Image()
-            snapshot.id = id
-            snapshot.token = self.token
-            snapshots.append(snapshot)
-        return snapshots
+        data = self.get_data("droplets/%s/snapshots/" % self.id, type=GET)
+        return [
+            Image(token=self.token, **snapshot)
+            for snapshot in data['snapshots']
+        ]
+
+    def get_backups(self):
+        """
+            This method will return the backup images connected to that
+            specific droplet.
+        """
+        data = self.get_data("droplets/%s/backups/" % self.id, type=GET)
+        return [
+            Image(token=self.token, **backup)
+            for backup in data['backups']
+        ]
 
     def get_kernel_available(self):
         """
